@@ -20,8 +20,7 @@
 #include <gsl_sf_gamma.h> // gsl_sf_fact
 #include <gsl_randist.h> // gsl_ran_binomial_pdf
 
-#include <gsl_siman.h> // simulated annealing
-#include <gsl_rng.h> // random number generator
+#include <ocaml_siman.h>
 
 CAMLprim value ocaml_gsl_pow_int (value x, value n) {
   CAMLparam2 (x, n);
@@ -326,6 +325,7 @@ CAMLprim value ocaml_gsl_fit_nlinear (
   CAMLreturn (ocaml_f_ks_final);
 }
 
+/*
 struct ocaml_siman_callbacks {
   value copy_fn;
   value energy_fn;
@@ -345,7 +345,7 @@ double ocaml_siman_energy (void* xp) {
   double result = Double_val (caml_callback (s->callbacks->energy_fn, s->state));
   printf ("[energy] x: %0.4f energy: %0.4f\n", Double_val (Field (s->state, 0)), result);
   fflush (stdout);
-  return result;
+  CAMLreturnT (double, result);
 }
 
 void ocaml_siman_step (const gsl_rng* rng, void* xp, double step_size) {
@@ -359,6 +359,7 @@ void ocaml_siman_step (const gsl_rng* rng, void* xp, double step_size) {
     "[ocaml_siman_step] step: %0.4f orig: %0.4f next: %0.4f\n",
     step, orig_state, Double_val (Field (s->state, 0)));
   fflush (stdout);
+  CAMLreturn0;
 }
 
 double ocaml_siman_distance (void* xp, void* yp) {
@@ -372,7 +373,7 @@ double ocaml_siman_distance (void* xp, void* yp) {
   double distance = Double_val (caml_callback2 (x->callbacks->distance_fn, x->state, y->state));
   printf ("[distance] result: %f\n", distance);
   fflush (stdout);
-  return distance;
+  CAMLreturnT (double, distance);
 }
 
 void ocaml_siman_copy (void* source, void* dest) {
@@ -383,10 +384,12 @@ void ocaml_siman_copy (void* source, void* dest) {
   struct ocaml_siman_state* s = (struct ocaml_siman_state*) source;
   struct ocaml_siman_state* d = (struct ocaml_siman_state*) dest;
   state = caml_callback (s->callbacks->copy_fn, s->state);
+//   caml_register_global_root (state);
   d->callbacks   = (*s).callbacks;
   d->state       = state;
   printf ("[ocaml_siman_copy] done\n");
   fflush (stdout);
+  CAMLreturn0 ();
 }
 
 void* ocaml_siman_construct (void* xp) {
@@ -397,21 +400,29 @@ void* ocaml_siman_construct (void* xp) {
   ocaml_siman_copy (xp, dest);
   printf ("[ocaml_siman_construct] done\n");
   fflush (stdout);
-  return dest;
+  CAMLreturnT (struct ocaml_siman_state*, dest);
 }
 
 void ocaml_siman_destroy (void* xp) {
+  CAMLparam0 ();
+  CAMLlocal1 (state);
   printf ("[ocaml_siman_destroy]\n");
   fflush (stdout);
-  free (xp);
+  struct ocaml_siman_state* x = (struct ocaml_siman_state*) xp;
+  state = x->state;
+//   caml_remove_global_root ((value*) &state);
+//   free (xp);
   printf ("[ocaml_siman_destroy] done\n");
   fflush (stdout);
+  CAMLreturn0;
 }
 
 void print_cfg (void* xp) {
+  CAMLparam0 ();
   struct ocaml_siman_state* s = (struct ocaml_siman_state*) xp;
   printf (" print cfg x: %0.4f", Double_val (Field (s->state, 0)));
   fflush (stdout);
+  CAMLreturn0;
 } 
 
 CAMLprim value ocaml_siman_solve (value copy_fn, value energy_fn, value step_fn, value distance_fn, value initial) {
@@ -468,3 +479,4 @@ CAMLprim value ocaml_siman_solve (value copy_fn, value energy_fn, value step_fn,
   fflush (stdout);
   CAMLreturn (xp0.state);
 }
+*/

@@ -434,14 +434,15 @@ module Stats_tests = struct
 end
 
 module Simulated_annealing = struct
+  type 'a t = {
+    copy: 'a ref -> 'a ref;
+    energy: 'a ref -> float;
+    step: 'a ref -> float -> unit;
+    dist: 'a ref -> 'a ref -> float;
+    state: 'a ref
+  }
 
-  external simulated_annealing :
-    copy:('a ref -> 'a ref) ->
-    energy:('a ref -> float) ->
-    step:('a ref -> float -> unit) ->
-    distance:('a ref -> 'a ref -> float) ->
-    init:'a ref ->
-    'a ref = "ocaml_siman_solve"
+  external simulated_annealing : 'a t -> 'a ref = "ocaml_siman_solve"
 
   let f = simulated_annealing
 end

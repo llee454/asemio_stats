@@ -6,7 +6,18 @@
  (inline_tests)
   (preprocess (pps ppx_jane))
   (foreign_stubs (language c) (names gsl)
-    (flags -I. -I/usr/include/gsl -I/usr/local/include/gsl))
-  (c_library_flags (-lgsl))
+    (flags
+      -I.
+      -I/usr/local/Cellar/gsl/2.7.1/include/gsl
+    ))
+  (foreign_archives gsl gslcblas)
   (install_c_headers gsl)
+)
+(rule
+  (targets libgsl.a libgslcblas.a)
+  (action (bash "
+    cp /usr/local/Cellar/gsl/2.7.1/lib/libgslcblas.a libgslcblas.a &&
+    cp /usr/local/Cellar/gsl/2.7.1/lib/libgsl.a libgsl.a"
+  ))
+  (mode promote)
 )

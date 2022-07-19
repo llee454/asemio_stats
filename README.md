@@ -16,6 +16,16 @@ The generated binary will call GSL to compute an integral and a linear regressor
 Initializing the Build Environment
 ----------------------------------
 
+### If compiling on Mac
+
+```
+brew update
+brew upgrade
+brew install gsl
+```
+
+### Installation Procedures
+
 ```
 opam switch create . ocaml-variants.4.10.0+flambda --no-install
 opam update

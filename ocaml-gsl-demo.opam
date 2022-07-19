@@ -4,17 +4,18 @@ synopsis: "A light-weight wrapper for some of the functions defined within the G
 authors: [
   "Larry Darryl Lee Jr."
 ]
-license: "GPLv3"
+license: "GPL-3.0-or-later"
 homepage: "https://github.com/llee454/ocaml-gsl-demo"
 bug-reports: "https://github.com/llee454/ocaml-gsl-demo/issues"
 depends: [
   "ocaml"
   "dune"
-  "core" 
+  "core"
   "core_kernel"
   "ppx_jane"
   "lwt"
   "lwt_ppx"
   "merlin"
+  "conf-openblas"
 ]
 
