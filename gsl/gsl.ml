@@ -241,7 +241,6 @@ module Stats_tests = struct
     printf "%.1f" @@ order_stat_approx ~r:20 ~n:20 ~mean:0.0 ~std:1.0;
     [%expect {|1.9|}]
 
-
   (**
     Computes an approximation of mean value of the r-th largest
     values in a random sample of n values drawn from a Gaussian
@@ -295,7 +294,8 @@ module Stats_tests = struct
     sumi xs ~f:(fun r y -> (y -. m) *. os.(r))
     /. Float.sqrt
          (sumi xs ~f:(fun _ y -> Float.square (y -. m)) *. sumi xs ~f:(fun r _ -> Float.square os.(r)))
-(*
+
+  (*
   let%expect_test "shapiro_francia_stat_1" =
     printf "%.4f"
       (shapiro_francia_stat
@@ -375,7 +375,7 @@ module Stats_tests = struct
     let q = 1.0 -. p in
     if Float.(p >= 0.5) then p -. q else q -. p
 
-(*
+  (*
   let%expect_test "shapiro_francia_test" =
     printf "%.4f"
       (shapiro_francia_test
@@ -424,7 +424,7 @@ module Stats_tests = struct
     [%expect {||}]
 *)
 
-(*
+  (*
   let%expect_test "shapiro_francia_test_2" =
     let () = Random.init 5 in
     let xs = Array.init 30 ~f:(fun _ -> Random.float 3.0) in
@@ -435,14 +435,16 @@ end
 
 module Simulated_annealing = struct
   type 'a t = {
-    copy: 'a ref -> 'a ref;
+    cons: 'a t ref -> 'a t ref;
     energy: 'a ref -> float;
-    step: 'a ref -> float -> unit;
+    step: 'a t ref -> max_dist:float -> unit;
     dist: 'a ref -> 'a ref -> float;
-    state: 'a ref
+    state: 'a ref;
+    copy: source:'a t ref -> dest:'a t ref -> unit;
   }
+  [@@deriving sexp]
 
-  external simulated_annealing : 'a t -> 'a ref = "ocaml_siman_solve"
+  external simulated_annealing : 'a t ref -> 'a ref = "ocaml_siman_solve"
 
   let f = simulated_annealing
 end
